@@ -1,0 +1,26 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  font-family: "ヒラギノ角ゴシック Pro", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, "MS Sans Serif", "ＭＳ Ｐゴシック", "MS PGothic", Osaka, sans-serif;
+  text-size-adjust: 100%;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+}
+a {
+  color: inherit;
+}
+img {
+  vertical-align: bottom;
+  max-width: 100%;
+}
+
+// /**
+//  * for in WebView contents
+//  */
+//
+// *,
+// ::before,
+// ::after {
+//   -webkit-touch-callout: none;
+//   -webkit-user-select: none;
+//   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+// }
