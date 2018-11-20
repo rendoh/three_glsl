@@ -1,6 +1,3 @@
-import { Vector2 } from 'three';
-
-// language=GLSL
 export const VERTEX_SHADER = `
 precision mediump float;
 varying vec2 vUv;
@@ -20,7 +17,7 @@ uniform float time;
 void main() {
   const float shakeLength = 0.02;
   const float shakeWidth = 0.005;
-  const float speed = 1.0;
+  const float speed = 2.0;
   
   float offsetX = sin(gl_FragCoord.x * shakeLength + time * speed) * shakeWidth;
   float offsetY = cos(gl_FragCoord.y * shakeLength + time * speed) * shakeWidth;
