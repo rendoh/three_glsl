@@ -2,33 +2,31 @@ import { Vector2 } from 'three';
 
 // language=GLSL
 export const VERTEX_SHADER = `
+precision mediump float;
 varying vec2 vUv;
+ 
 void main() {
   vUv = uv;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}`;
+}
+`;
 
 const FRAGMENT_SHADER = `
-uniform sampler2D tDiffuse;
+precision mediump float;
 varying vec2 vUv;
-uniform vec2 vScreenSize;
-uniform vec2 vCenter;
-uniform float fRadius;
-uniform float fUzuStrength;
+uniform sampler2D tDiffuse;
+uniform float time;
+
 void main() {
-  vec2 pos = (vUv * vScreenSize) - vCenter;
-  float len = length(pos);
-  if(len >= fRadius) {
-    gl_FragColor = texture2D(tDiffuse, vUv);
-    return;
-  }
+  const float shakeLength = 0.02;
+  const float shakeWidth = 0.005;
+  const float speed = 1.0;
   
-  float uzu = min(max(1.0 - (len / fRadius), 0.0), 1.0) * fUzuStrength; 
-  float x = pos.x * cos(uzu) - pos.y * sin(uzu); 
-  float y = pos.x * sin(uzu) + pos.y * cos(uzu);
-  vec2 retPos = (vec2(x, y) + vCenter) / vScreenSize;
-  vec4 color = texture2D(tDiffuse, retPos);
-  gl_FragColor = color;
+  float offsetX = sin(gl_FragCoord.x * shakeLength + time * speed) * shakeWidth;
+  float offsetY = cos(gl_FragCoord.y * shakeLength + time * speed) * shakeWidth;
+
+  vec4 texel = texture2D( tDiffuse, vec2(vUv.x + offsetX , vUv.y + offsetY));
+  gl_FragColor = texel;
 }
 `;
 
@@ -37,31 +35,12 @@ void main() {
  * Uzumaki
  */
 export class UzumakiShader {
-  constructor(width, height) {
+  constructor() {
     this.uniforms = {
       tDiffuse: { type: 't', value: null },
-      vScreenSize: { type: 'v2', value: new Vector2(300, 200) },
-      vCenter: { type: 'v2', value: new Vector2(1000, 0) },
-      fRadius: { type: 'f', value: 150.0 },
-      fUzuStrength: { type: 'f', value: 2.5 },
+      time: { type: 'f', value: 0.0 },
     };
     this.vertexShader = VERTEX_SHADER;
     this.fragmentShader = FRAGMENT_SHADER;
-    this.setScreenSize(width, height);
-  }
-
-  setMousePos(mouseX, mouseY) {
-    this.uniforms.vCenter.value.x = mouseX;
-    this.uniforms.vCenter.value.y =
-      this.uniforms.vScreenSize.value.y - mouseY;
-  }
-
-  setScreenSize(width, height) {
-    this.uniforms.vScreenSize.value.x = width;
-    this.uniforms.vScreenSize.value.y = height;
-  }
-
-  setUzumakiScale(scale) {
-    this.uniforms.fRadius.value = scale;
   }
 }

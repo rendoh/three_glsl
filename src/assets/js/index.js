@@ -19,7 +19,7 @@ const {
 } = THREE;
 // import TWEEN from '@tweenjs/tween.js';
 
-const uzumakiShader = new UzumakiShader(window.innerWidth, window.innerHeight);
+const uzumakiShader = new UzumakiShader();
 
 const el = document.getElementById('stage');
 
@@ -70,6 +70,8 @@ createImagePlane()
 
 function render() {
   // renderer.render(scene, camera);
+  // camera.position.z -= 0.1;
+  shaderPass.uniforms.time.value += 0.01;
   composer.render();
   requestAnimationFrame(render);
 }
