@@ -14,15 +14,25 @@ varying vec2 vUv;
 uniform sampler2D tDiffuse;
 uniform float time;
 
-void main() {
-  const float shakeLength = 0.02;
-  const float shakeWidth = 0.005;
-  const float speed = 2.0;
-  
-  float offsetX = sin(gl_FragCoord.x * shakeLength + time * speed) * shakeWidth;
-  float offsetY = cos(gl_FragCoord.y * shakeLength + time * speed) * shakeWidth;
+float wave(vec2 uv, vec2 emitter, float speed, float phase) {
+  float dst = distance(uv, emitter);
+  return pow((0.5 + 0.5 * sin(dst * phase - time * speed)), 2.0);
+}
 
-  vec4 texel = texture2D( tDiffuse, vec2(vUv.x + offsetX , vUv.y + offsetY));
+void main() {
+  vec2 position = ( gl_FragCoord.xy / 250.0 );
+  float w = wave(position, vec2(0.0, 0.4), 4.5, 13.0);
+  w += wave(position, vec2(0.6, 0.11), 3.7, 9.0);
+  w += wave(position, vec2(2.4, 0.8), 5.3, 9.0);
+  w += wave(position, vec2(-1.4, 0.84), 6.7, 12.0);
+  w += wave(position, vec2(2.42, 2.61), 9.2, 12.0);
+  //  w += wave(position, vec2(0.39, 0.46), 10.0, 150.0);
+  //  w += wave(position, vec2(0.51, 0.484), 10.0, 150.0);
+  //  w += wave(position, vec2(0.732, 0.91), 10.0, 150.0);
+
+  w *= 0.116 * 0.04;
+
+  vec4 texel = texture2D(tDiffuse, vUv + w);
   gl_FragColor = texel;
 }
 `;
